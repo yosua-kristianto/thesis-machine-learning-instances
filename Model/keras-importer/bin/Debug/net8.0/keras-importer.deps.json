@@ -1,0 +1,86 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "keras-importer/1.0.0": {
+        "dependencies": {
+          "Keras.NET": "3.8.5"
+        },
+        "runtime": {
+          "keras-importer.dll": {}
+        }
+      },
+      "Keras.NET/3.8.5": {
+        "dependencies": {
+          "Numpy.Bare": "3.8.1.25"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Keras.dll": {
+            "assemblyVersion": "3.8.5.0",
+            "fileVersion": "3.8.5.0"
+          }
+        }
+      },
+      "Microsoft.CSharp/4.5.0": {},
+      "Numpy.Bare/3.8.1.25": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.5.0",
+          "pythonnet_netstandard_py38_win": "2.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Numpy.Bare.dll": {
+            "assemblyVersion": "3.7.1.4",
+            "fileVersion": "3.7.1.4"
+          }
+        }
+      },
+      "pythonnet_netstandard_py38_win/2.5.1": {
+        "runtime": {
+          "lib/netstandard2.0/Python.Runtime.dll": {
+            "assemblyVersion": "2.5.1.0",
+            "fileVersion": "2.5.1.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "keras-importer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Keras.NET/3.8.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-NFUV194GVq87ZBrUNMrFXy/pMPchh0clyShr4HHoKY+NYaCOIr9kvcRS1hE0rs8S9Adbvt2+gIG9HfNCWikIAg==",
+      "path": "keras.net/3.8.5",
+      "hashPath": "keras.net.3.8.5.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
+      "path": "microsoft.csharp/4.5.0",
+      "hashPath": "microsoft.csharp.4.5.0.nupkg.sha512"
+    },
+    "Numpy.Bare/3.8.1.25": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YqbpafFbck+JI0/guhaiJqAqTOKJXGbCfre6PZH+eeQbg27rllyTNPCdw36oLSNzagBIzJjmsGDE61lfSvairg==",
+      "path": "numpy.bare/3.8.1.25",
+      "hashPath": "numpy.bare.3.8.1.25.nupkg.sha512"
+    },
+    "pythonnet_netstandard_py38_win/2.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-y8D5KG5Z5pFUzxBINwaN6LuM50LpkRV3TD8Lrn9jz1spbT1mBSCeYAzyA8MSo9+Jb3R/evXq0m3+d1KiDGGYUg==",
+      "path": "pythonnet_netstandard_py38_win/2.5.1",
+      "hashPath": "pythonnet_netstandard_py38_win.2.5.1.nupkg.sha512"
+    }
+  }
+}

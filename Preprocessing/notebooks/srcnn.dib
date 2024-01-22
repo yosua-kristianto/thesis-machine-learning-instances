@@ -1,0 +1,53 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"fsharp","items":[{"aliases":[],"languageName":"fsharp","name":"fsharp"}]}}
+
+#!fsharp
+
+#r "nuget: SixLabors.ImageSharp, 3.1.2"
+
+#!fsharp
+
+open SixLabors.ImageSharp;
+open SixLabors.ImageSharp.Processing;
+
+#!markdown
+
+# Dataset Pre-Processing for SRCNN
+
+The main objectives of this pre-processing are mainly generate a low resolution version of an image 
+
+Algorithm:
+
+1. Take system directory
+2. For every data within the directory, reduce the image resolution by 30%, and save the image
+3. Resize the image by 333% and save the image.
+4. Generate array from the image.
+5. Save the generated array of the resized image to file.
+6. Generate array from the original image.
+7. Save the generated array of the image to file.
+
+#!fsharp
+
+let image = Image.Load("C:\\Users\\yosua\\Pictures\\Bocchi\\FB_IMG_1699768403839.jpg");
+
+Console.WriteLine(image);
+
+// Lowres Generation
+
+let originalWidth = image.Width;
+let originalHeight = image.Height;
+
+let newWidth = int(float(image.Width) * (0.90));
+let newHeight = int(float(image.Height) * (0.90));
+
+image.Mutate(fun x -> ignore (x.Resize(newWidth, newHeight)));
+
+let the333Percent = (333.333 / 100.00);
+
+image.Mutate(fun x -> ignore (x.Resize(originalWidth, originalHeight)));
+
+printfn "Generating LowRes image in its original size %d %d -> %d %d -> %d %d" originalWidth originalHeight newWidth newHeight originalWidth originalHeight;
+
+
+image.Save("image.jpg")
