@@ -10,6 +10,25 @@
 
 open SixLabors.ImageSharp;
 open SixLabors.ImageSharp.Processing;
+open System.IO;
+
+// Utils
+open Microsoft.FSharp.Core.Operators
+
+#!markdown
+
+## Folder settings
+
+Set the input, and output folder of each needed folders
+
+#!fsharp
+
+let original_image_folder_path = "D:\\tDatase\\Original Image";
+let temp_lowres_image_folder_path = "D:\\tDatase\\LowRes Image";
+let downscaled_upscaled_image_folder_path = "D:\\tDatase\\Downscale Upscaled Image";
+
+let original_image_array_folder_path = "D:\\tDatase\\Original Image Array";
+let lowres_image_array_folder_path = "D:\\tDatase\\LowRes Image Array";
 
 #!markdown
 
@@ -21,7 +40,7 @@ Algorithm:
 
 1. Take system directory
 2. For every data within the directory, reduce the image resolution by 30%, and save the image
-3. Resize the image by 333% and save the image.
+3. Resize the image by the original image and save the image.
 4. Generate array from the image.
 5. Save the generated array of the resized image to file.
 6. Generate array from the original image.
@@ -29,25 +48,78 @@ Algorithm:
 
 #!fsharp
 
-let image = Image.Load("C:\\Users\\yosua\\Pictures\\Bocchi\\FB_IMG_1699768403839.jpg");
-
-Console.WriteLine(image);
-
-// Lowres Generation
-
-let originalWidth = image.Width;
-let originalHeight = image.Height;
-
-let newWidth = int(float(image.Width) * (0.90));
-let newHeight = int(float(image.Height) * (0.90));
-
-image.Mutate(fun x -> ignore (x.Resize(newWidth, newHeight)));
-
-let the333Percent = (333.333 / 100.00);
-
-image.Mutate(fun x -> ignore (x.Resize(originalWidth, originalHeight)));
-
-printfn "Generating LowRes image in its original size %d %d -> %d %d -> %d %d" originalWidth originalHeight newWidth newHeight originalWidth originalHeight;
+type ImageDTO (imagePath: string, width: int, height: int) =
+    member this.ImagePath: string = imagePath;
+    member this.Width: int = width;
+    member this.Height: int = height;
 
 
-image.Save("image.jpg")
+(*
+    GetFileNameFromPath
+
+    This fucntion help to get file name from path string
+*)
+let GetFileNameFromPath (path: string): string = 
+    // Get the actual file name
+    let reversedString = (path.ToCharArray()) |> Array.rev;
+    let indexOfBackSlash = String(reversedString).IndexOf("\\");
+    let substringBackSlash = reversedString.[0 .. (indexOfBackSlash-1)];
+    String((substringBackSlash) |> Array.rev);
+
+
+(*
+    DownscaleImage
+
+    This function will shorten the code needed to downscale an image
+*)
+let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO = 
+    let image = Image.Load(imagePath);
+
+    let fileName = GetFileNameFromPath imagePath;
+
+    printfn "Filename is %s" fileName;
+
+    // Lowres Generation
+
+    let originalWidth = image.Width;
+    let originalHeight = image.Height;
+
+    let newWidth = int(float(image.Width) * (downscaleRatio));
+    let newHeight = int(float(image.Height) * (downscaleRatio));
+
+    image.Mutate(fun x -> ignore (x.Resize(newWidth, newHeight)));
+
+    let lowresImagePath = temp_lowres_image_folder_path + "\\" + fileName;
+
+    image.Save(lowresImagePath);
+
+    ImageDTO(lowresImagePath, originalWidth, originalHeight);
+
+
+let UpscaleImageToOriginalSize (imagePath: string) (originalWidth: int) (originalHeight: int) = 
+    let originImage = Image.Load(imagePath);
+    let fileName = GetFileNameFromPath imagePath;
+
+    originImage.Mutate(fun x -> ignore (x.Resize(originalWidth, originalHeight)));
+
+    let upscaledImagePath = downscaled_upscaled_image_folder_path + "\\" + fileName;
+
+    originImage.Save(upscaledImagePath);
+
+    ImageDTO(upscaledImagePath, originalWidth, originalHeight);
+
+
+let downscaleUpscaleImage (imagePath: string) =
+    let downscaledImage: ImageDTO = DownscaleImage imagePath 0.30;
+
+    UpscaleImageToOriginalSize downscaledImage.ImagePath downscaledImage.Width downscaledImage.Height;
+
+#!fsharp
+
+let files = Directory.GetFiles(original_image_folder_path);
+
+    
+for i in files do
+    printfn "Processing %s" i 
+
+    downscaleUpscaleImage i;
