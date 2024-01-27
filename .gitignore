@@ -2,3 +2,6 @@
 /.vs
 /.fleet
 /.idea
+/logs
+
+config.json
