@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = keras_importer
-build_property.ProjectDir = d:\Code\Academica\Machine Learning Instance\Model\keras-importer\
+build_property.ProjectDir = D:\Code\Academica\Machine Learning Instance\Model\keras-importer\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
