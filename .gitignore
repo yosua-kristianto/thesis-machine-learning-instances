@@ -5,3 +5,8 @@
 /logs
 
 config.json
+/Model/keras-importer/obj
+/Model/keras-importer/obj
+/Model/keras-importer/obj
+/Model/pytorch-importer/obj
+/Model/tesseract-integrator/obj
