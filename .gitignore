@@ -11,3 +11,5 @@ config.json
 /Model/pytorch-importer/obj
 /Model/tesseract-integrator/obj
 
+Model/keras-importer/bin/Debug/net8.0/keras-importer.dll
+Model/keras-importer/bin/Debug/net8.0/keras-importer.exe
