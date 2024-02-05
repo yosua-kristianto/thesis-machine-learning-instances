@@ -5,11 +5,10 @@
 /logs
 
 config.json
-/Model/keras-importer/obj
-/Model/keras-importer/obj
+
 /Model/keras-importer/obj
 /Model/pytorch-importer/obj
 /Model/tesseract-integrator/obj
-
-Model/keras-importer/bin/Debug/net8.0/keras-importer.dll
-Model/keras-importer/bin/Debug/net8.0/keras-importer.exe
+/Model/keras-importer/bin
+/Model/pytorch-importer/bin
+/Model/tesseract-integrator/bin
