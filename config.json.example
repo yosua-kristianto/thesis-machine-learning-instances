@@ -9,4 +9,10 @@
 
     "YOLO_ANNOTATION_FOLDER_OUTPUT": "string",
     "MSCOCO_ANNOTATION_FOLDER_INPUT": "string",
+
+    "YOLO_IMAGE_TRAIN_FOLDER": "string",
+    "YOLO_IMAGE_TEST_FOLDER": "string",
+    "YOLO_IMAGE_VAL_FOLDER": "string",
+
+    "GDRIVE_API_SCOPES": []
 }
