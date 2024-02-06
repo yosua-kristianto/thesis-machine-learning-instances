@@ -1,9 +1,10 @@
 from services.google_drive_services import GoogleDriveService;
 import pandas;
-from facade.env_helper import EnvironmentVariable;
 import sys;
+from facade.logging_system import Log;
 
 if __name__ == "__main__":
+   
    # Argument extractors
 
    file_origin_path = "";
@@ -12,9 +13,10 @@ if __name__ == "__main__":
    for i in sys.argv:
        if(i.__contains__(".py")):
            continue;
-
+       
        if(not i.__contains__("=") or not i.startswith("--")):
            raise Exception("Every arguments must consist --[config_name]=[value] format\n" + "Supported arguments:\n" + "--file_origin_path : This mark the origin file path to be uploaded\n" + "--folder_code      : This mark the target folder the file will be uploaded at\n" + "e.g. --file_origin_path=absolute/path/to/file.ext");
+       
        argument = i.replace("--", "");
        argument = argument.split("=");
         
@@ -23,8 +25,6 @@ if __name__ == "__main__":
        elif(argument[0] == "folder_code"):
            folder_code = argument[1];
     
-   print(file_origin_path, folder_code);
-
    # Get folder id from csv
    dataframe = pandas.read_csv("data.csv");
 
