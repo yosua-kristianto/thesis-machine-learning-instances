@@ -2,9 +2,11 @@
 /.vs
 /.fleet
 /.idea
-/logs
 
 config.json
+credentials.json
+data.csv
+token.json
 
 /Model/keras-importer/obj
 /Model/pytorch-importer/obj
