@@ -13,7 +13,7 @@ class EnvironmentVariable:
     def _read_env(self):
         
         try:
-            with open("../config.json", "r") as fopen:
+            with open("config.json", "r") as fopen:
                 self.__key_value_pair = json.load(fopen);
         except Exception as error:
             print(f"Failed to retrieve environment variable. Ensure that your configuration file is exist as config.json: {error}");

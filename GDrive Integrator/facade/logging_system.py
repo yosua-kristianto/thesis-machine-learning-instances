@@ -17,7 +17,7 @@ class Log:
 
         fopen = open(log_path, operation);
         
-        message = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]" + "["+ type +"]"+ log + "\n";
+        message = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]" + "["+ type +"] "+ log + "\n";
 
         fopen.write(message);
         fopen.close();
