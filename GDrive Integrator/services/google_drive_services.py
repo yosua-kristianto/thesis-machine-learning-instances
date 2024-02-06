@@ -14,23 +14,19 @@ from google.auth.transport.requests import Request
 
 from facade.logging_system import Log;
 from facade.telegram_service import telegram_reporter;
+from facade.env_helper import EnvironmentVariable;
 
 
 class GoogleDriveService:
     
     # If modifying these scopes, delete the file token.json.
-    SCOPES = [
-       "https://www.googleapis.com/auth/drive.metadata.readonly",
-       "https://www.googleapis.com/auth/drive",
-       "https://www.googleapis.com/auth/drive.appdata"
-    ]; 
+    SCOPES = []; 
     credential = None;
 
     def __init__(self):
-      """Shows basic usage of the Drive v3 API.
-      Prints the names and ids of the first 10 files the user has access to.
-      """
-      credential = None
+      env = EnvironmentVariable();
+      self.SCOPES = env.get_key("GDRIVE_API_SCOPES");
+
       # The file token.json stores the user's access and refresh tokens, and is
       # created automatically when the authorization flow completes for the first
       # time.
@@ -52,21 +48,23 @@ class GoogleDriveService:
 
     def check_required_refresh_token(self):
        if (os.path.exists("token.json")):
-            epoch_now = datetime.utcnow().timestamp();
+            epoch_now = datetime.now().timestamp();
 
             with open("token.json", "r") as fopen:
                 data = json.loads(fopen.read());
             token_expirity = data["expiry"];
 
             epoch_expirity = datetime.fromisoformat(token_expirity).replace(tzinfo=timezone.utc);
-            print(epoch_expirity);
+            # print(epoch_expirity, datetime.utcnow());
             epoch_expirity = epoch_expirity.timestamp();
             
-            if(epoch_expirity - epoch_now < 3600):
+            # print(epoch_expirity, epoch_now);
+            
+            # print(str(epoch_expirity - epoch_now))
+            
+            if((epoch_expirity - epoch_now) < 3600):
                 Log.d("Refresh token conducted.");
                 self.credential.refresh(Request());
-                
-                print(self.credential);
                 
                 # Re-write token
                 with open("token.json", "w") as token:
@@ -82,19 +80,15 @@ class GoogleDriveService:
         file_name: str = os.path.basename(path_origin);
         file_mimetype: str = mimetypes.guess_type(path_origin)[0];
         
-        print(file_mimetype);
-        
         try:
             file_metadata = {"name": file_name, "parents": [folder_id]};
             media = MediaFileUpload(path_origin, mimetype = file_mimetype);
-
-            Log.i(f"Let's try to upload {file_name} in {folder_id}")            
 
             upload = (
                 self.service().files().create(body = file_metadata, media_body = media, fields = "id").execute()
             );
             
-            Log.i(f"Successfully uploaded {file_name} with type of {file_mimetype}");
+            Log.d(f"Successfully uploaded {file_name} with type of {file_mimetype}");
         except Exception as error:
             Log.e(f"Upload error with: {error}");
             telegram_reporter(f"Upload error with message of: {error}")
