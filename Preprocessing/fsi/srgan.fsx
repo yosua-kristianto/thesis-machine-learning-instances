@@ -60,7 +60,7 @@ type ImageDTO (imagePath: string, width: int, height: int) =
 let GetFileNameFromPath (path: string): string = 
     // Get the actual file name
     let reversedString = (path.ToCharArray()) |> Array.rev;
-    let indexOfBackSlash = String(reversedString).IndexOf("\\");
+    let indexOfBackSlash = String(reversedString).IndexOf("/");
     let substringBackSlash = reversedString.[0 .. (indexOfBackSlash-1)];
     String((substringBackSlash) |> Array.rev);
 
@@ -81,9 +81,7 @@ let GetFileNameFromPath (path: string): string =
 let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO = 
     let image = Image.Load(imagePath);
 
-    let fileName = GetFileNameFromPath imagePath;
-
-    printfn "Filename is %s" fileName;
+    let fileName = Path.GetFileName(imagePath);
 
     // Lowres Generation
 
@@ -95,7 +93,7 @@ let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO =
 
     image.Mutate(fun x -> ignore (x.Resize(newWidth, newHeight)));
 
-    let lowresImagePath = EnvironmentVariable.TEMP_LOWRES_IMAGE_FOLDER_PATH + "\\" + fileName;
+    let lowresImagePath = EnvironmentVariable.TEMP_LOWRES_IMAGE_FOLDER_PATH + "/" + fileName;
 
     image.Save(lowresImagePath);
 
@@ -108,11 +106,11 @@ let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO =
 *)
 let ScaleImageToSpecificSize (imagePath: string) (targetWidth: int) (targetHeight: int) = 
     let originImage = Image.Load(imagePath);
-    let fileName = GetFileNameFromPath imagePath;
+    let fileName = Path.GetFileName(imagePath);
 
     originImage.Mutate(fun x -> ignore (x.Resize(targetWidth, targetHeight)));
 
-    let rescaledImagePath = EnvironmentVariable.DOWNSCALED_UPSCALED_IMAGE_FOLDER_PATH + "\\" + fileName;
+    let rescaledImagePath = EnvironmentVariable.DOWNSCALED_UPSCALED_IMAGE_FOLDER_PATH + "/" + fileName;
 
     originImage.Save(rescaledImagePath);
 
@@ -151,7 +149,7 @@ let SaveArrayToFile (imagePath) (lowresArrayData) (originalArrayData) =
     let fileName: string = GetFileNameFromPath imagePath;
 
     let tensorPayload: string = JsonConvert.SerializeObject(tensor);
-    File.WriteAllText(EnvironmentVariable.LABELS_ARRAY_FOLDER_PATH+"\\"+fileName+".json", tensorPayload);
+    File.WriteAllText(EnvironmentVariable.LABELS_ARRAY_FOLDER_PATH+"/"+fileName+".json", tensorPayload);
 
 
 type TelegramRequestDTO = { text: string; chat_id: int64;}
@@ -188,7 +186,7 @@ telegramService "Starting the data pre-processing operation";
 for i in files do
     printfn "Processing %s" i 
 
-    let downscaleUpscaledImagePath = downscaleUpscaleImage i;
+    downscaleUpscaleImage i;
 
 
 telegramService "Pre-Processing process has completed" ;
