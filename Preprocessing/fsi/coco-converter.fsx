@@ -17,9 +17,8 @@ type RegisteredKeys = {
     CHAT_ID: int64
     YOLO_ANNOTATION_FOLDER_OUTPUT: string
     MSCOCO_ANNOTATION_FOLDER_INPUT: string
-    YOLO_IMAGE_TRAIN_FOLDER: string
-    YOLO_IMAGE_TEST_FOLDER: string
-    YOLO_IMAGE_VAL_FOLDER: string
+    MSCOCO_IMAGE_FOLDER: string
+    YOLO_IMAGE_FOLDER: string
 };
 
 type TelegramRequestDTO = { 
@@ -53,6 +52,13 @@ type CocoJson = {
     images: Image array
     annotations: Annotation array
 };
+
+
+type YOLOAnnotation (imageId: int, imageFilePath: string, dataType: string, annotations: string array) = 
+    member this.image_id: int = imageId
+    member this.image_filepath: string = imageFilePath
+    member this.data_type: string = dataType
+    member val annotations: string array = annotations with get, set
 
 let EnvironmentVariable : RegisteredKeys =
     let envPath: string = "../../config.json";
@@ -138,7 +144,22 @@ let FindAnnotationById (source: int) (annotationId: int): Annotation =
 
     resultSet[0];
 
-let outputFolderPath = EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT;
+// ETL Annotations
+let mutable annotations: YOLOAnnotation array = [||];
+
+let FindAnnotationByImageId (imageId: int): YOLOAnnotation = 
+    let resultSet = annotations |> Array.filter(fun x -> x.image_id = imageId);
+
+    resultSet[0];
+
+let UpdateAnnotationByImageId (imageId: int) (newAnnotation: string): YOLOAnnotation = 
+    let toBeInserted = [| newAnnotation |];
+
+    let resultSet = FindAnnotationByImageId imageId;
+    resultSet.annotations <- Array.append resultSet.annotations toBeInserted
+
+    resultSet;
+
 
 let RemoveExtensionFromFileName (filename: string) =
     let reversedString = (filename.ToCharArray()) |> Array.rev;
@@ -175,13 +196,27 @@ let runGDriveIntegratorScript (script: string) =
     let error = proc.StandardError.ReadToEnd()
 
     printfn "Output: %s\n\n\n" output
+
+let moveFile (sourcePath: string) (targetPath: string) = 
+    let fileName = Path.GetFileName(sourcePath);
+
+    let destinationFilePath = Path.Combine(targetPath, fileName)
     
-telegramService "Starting generating Yolo Output from MSCOCO";
+    if File.Exists(sourcePath) then
+        // Check if the destination directory exists, if not, create it
+        if not <| Directory.Exists(targetPath) then
+            Directory.CreateDirectory(targetPath)
+        
+        // Copy the file to the destination directory
+        File.Copy(sourcePath, destinationFilePath, true) // Set overwrite to true to overwrite if the file already exists
+    else
+        printfn "Source file does not exist: %s" sourcePath
+
+    telegramService "Starting generating Yolo Output from MSCOCO";
+
 
 for src in 0 .. (jsonContent.Length - 1) do
     for i in jsonContent[src].annotations do
-        printfn "Processing annotation id: %d" i.id ;
-
         let image = FindImageById src i.image_id;
 
         let annotationString = (i.category_id - 1).ToString() 
@@ -193,17 +228,37 @@ for src in 0 .. (jsonContent.Length - 1) do
                                         + i.bbox[2].ToString() 
                                         + " " 
                                         + i.bbox[3].ToString();
+
+        let mutable transformAnnotation = YOLOAnnotation(i.image_id, (EnvironmentVariable.MSCOCO_IMAGE_FOLDER + image.file_name), cocoTypes.[src], [|annotationString|]);
+
+        try 
+            transformAnnotation <- FindAnnotationByImageId i.image_id;
+            transformAnnotation <- UpdateAnnotationByImageId i.image_id annotationString;
+        with
+        | ex -> annotations <- Array.append annotations [| transformAnnotation |];
+
         
-        let folderPath = outputFolderPath + "/" + cocoTypes.[src] + "/";
+for e in annotations do
+    let folderPath = EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/" + e.data_type + "/";
 
-        Directory.CreateDirectory(folderPath) |> ignore;
+    Directory.CreateDirectory(folderPath) |> ignore;
 
-        let yoloAnnotationFilePath = folderPath + RemoveExtensionFromFileName(image.file_name) + ".txt";
+    let fileName = Path.GetFileName(e.image_filepath);
+    
+    let yoloAnnotationFilePath = folderPath + RemoveExtensionFromFileName(fileName) + ".txt";
+    
+    let mutable annotationsString: string = "";
 
-        use stream = new StreamWriter (yoloAnnotationFilePath, false);
-        stream.WriteLine(annotationString);
+    for f in e.annotations do
+        annotationsString <- annotationsString + f + "\n";
 
-        stream.Close();
+    use stream = new StreamWriter (yoloAnnotationFilePath, false);
+    
+    stream.WriteLine(annotationsString);
+    stream.Close();
+
+    // Copy file to the destinated image folder.
+    moveFile (e.image_filepath) (EnvironmentVariable.YOLO_IMAGE_FOLDER + e.data_type + fileName)
 
 
 telegramService "Done generating Yolo Output from MSCOCO";
