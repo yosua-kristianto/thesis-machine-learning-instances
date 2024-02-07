@@ -60,7 +60,7 @@ type ImageDTO (imagePath: string, width: int, height: int) =
 let GetFileNameFromPath (path: string): string = 
     // Get the actual file name
     let reversedString = (path.ToCharArray()) |> Array.rev;
-    let indexOfBackSlash = String(reversedString).IndexOf("\\");
+    let indexOfBackSlash = String(reversedString).IndexOf("/");
     let substringBackSlash = reversedString.[0 .. (indexOfBackSlash-1)];
     String((substringBackSlash) |> Array.rev);
 
@@ -93,7 +93,7 @@ let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO =
 
     image.Mutate(fun x -> ignore (x.Resize(newWidth, newHeight)));
 
-    let lowresImagePath = EnvironmentVariable.TEMP_LOWRES_IMAGE_FOLDER_PATH + "\\" + fileName;
+    let lowresImagePath = EnvironmentVariable.TEMP_LOWRES_IMAGE_FOLDER_PATH + "/" + fileName;
 
     image.Save(lowresImagePath);
 
@@ -110,7 +110,7 @@ let ScaleImageToSpecificSize (imagePath: string) (targetWidth: int) (targetHeigh
 
     originImage.Mutate(fun x -> ignore (x.Resize(targetWidth, targetHeight)));
 
-    let rescaledImagePath = EnvironmentVariable.DOWNSCALED_UPSCALED_IMAGE_FOLDER_PATH + "\\" + fileName;
+    let rescaledImagePath = EnvironmentVariable.DOWNSCALED_UPSCALED_IMAGE_FOLDER_PATH + "/" + fileName;
 
     originImage.Save(rescaledImagePath);
 
@@ -149,7 +149,7 @@ let SaveArrayToFile (imagePath) (lowresArrayData) (originalArrayData) =
     let fileName: string = GetFileNameFromPath imagePath;
 
     let tensorPayload: string = JsonConvert.SerializeObject(tensor);
-    File.WriteAllText(EnvironmentVariable.LABELS_ARRAY_FOLDER_PATH+"\\"+fileName+".json", tensorPayload);
+    File.WriteAllText(EnvironmentVariable.LABELS_ARRAY_FOLDER_PATH+"/"+fileName+".json", tensorPayload);
 
 
 type TelegramRequestDTO = { text: string; chat_id: int64;}
