@@ -6,6 +6,7 @@ open System.IO;
 open SixLabors.ImageSharp;
 open SixLabors.ImageSharp.Processing;
 open SixLabors.ImageSharp.PixelFormats;
+open System.Text;
 
 
 // Utils
@@ -142,6 +143,8 @@ let ConvertImageToArray (imagePath: string) =
     image.Dispose();
     pixelArray;
 
+type TensorDatasetDTO = { LowRes: Array; Target: Array; }
+
 let SaveArrayToFile (imagePath) (lowresArrayData) (originalArrayData) =
     let tensor: TensorDatasetDTO = { LowRes = lowresArrayData; Target = originalArrayData; }
 
@@ -181,18 +184,11 @@ let downscaleUpscaleImage (imagePath: string) =
 let files = Directory.GetFiles(EnvironmentVariable.ORIGINAL_IMAGE_DIRECTORY);
 
 telegramService "Starting the data pre-processing operation";
-
-type TensorDatasetDTO = { LowRes: Array; Target: Array; }
     
 for i in files do
     printfn "Processing %s" i 
 
     let downscaleUpscaledImagePath = downscaleUpscaleImage i;
-
-    let lowresArrayData = ConvertImageToArray downscaleUpscaledImagePath.ImagePath;
-    let targetArrayData = ConvertImageToArray i;
-
-    SaveArrayToFile i lowresArrayData targetArrayData;
 
 
 telegramService "Pre-Processing process has completed" ;
