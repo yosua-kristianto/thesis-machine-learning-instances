@@ -81,9 +81,7 @@ let GetFileNameFromPath (path: string): string =
 let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO = 
     let image = Image.Load(imagePath);
 
-    let fileName = GetFileNameFromPath imagePath;
-
-    printfn "Filename is %s" fileName;
+    let fileName = Path.GetFileName(imagePath);
 
     // Lowres Generation
 
@@ -108,7 +106,7 @@ let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO =
 *)
 let ScaleImageToSpecificSize (imagePath: string) (targetWidth: int) (targetHeight: int) = 
     let originImage = Image.Load(imagePath);
-    let fileName = GetFileNameFromPath imagePath;
+    let fileName = Path.GetFileName(imagePath);
 
     originImage.Mutate(fun x -> ignore (x.Resize(targetWidth, targetHeight)));
 
@@ -188,7 +186,7 @@ telegramService "Starting the data pre-processing operation";
 for i in files do
     printfn "Processing %s" i 
 
-    let downscaleUpscaledImagePath = downscaleUpscaleImage i;
+    downscaleUpscaleImage i;
 
 
 telegramService "Pre-Processing process has completed" ;
