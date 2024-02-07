@@ -6,6 +6,7 @@ open Newtonsoft.Json;
 open System.Linq;
 open System.Net.Http;
 open System.Diagnostics;
+open System.Text;
 
 (*
     Model Part
@@ -179,6 +180,8 @@ telegramService "Starting generating Yolo Output from MSCOCO";
 
 for src in 0 .. (jsonContent.Length - 1) do
     for i in jsonContent[src].annotations do
+        printfn "Processing annotation id: %d" i.id ;
+
         let image = FindImageById src i.image_id;
 
         let annotationString = (i.category_id - 1).ToString() 
