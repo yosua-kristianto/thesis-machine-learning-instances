@@ -205,60 +205,87 @@ let moveFile (sourcePath: string) (targetPath: string) =
     if File.Exists(sourcePath) then
         // Check if the destination directory exists, if not, create it
         if not <| Directory.Exists(targetPath) then
-            Directory.CreateDirectory(targetPath)
+            Directory.CreateDirectory(targetPath) |> ignore;
         
         // Copy the file to the destination directory
         File.Copy(sourcePath, destinationFilePath, true) // Set overwrite to true to overwrite if the file already exists
     else
-        printfn "Source file does not exist: %s" sourcePath
+        failwith ("Copying image file encounter error. Source does not exist: " + sourcePath);
 
-    telegramService "Starting generating Yolo Output from MSCOCO";
+let WriteLog (message: string) (logType: string) =
+    let currentTime = DateTime.Now;
+    let currentTimeInString = currentTime.ToString("yyyy-MM-dd H:m:s.FFFF zzz")
+    let currentDateInString = currentTime.ToString("yyyyMMdd")
+    let logToBeWritten = sprintf "[%s][%s][COCO_EXTRACTOR] %s" currentTimeInString logType message
+    let pathToLog = Path.Combine("../../logs/", sprintf "%s.log" currentDateInString);
 
+    if not (File.Exists(pathToLog)) then
+        if not (Directory.Exists("../../logs/")) then
+            Directory.CreateDirectory("../../logs/") |> ignore;
+        use stream = new StreamWriter(pathToLog, false);
+
+        stream.WriteLine("");
+        stream.Close();
+
+    File.AppendAllText(pathToLog, logToBeWritten + "\n") |> ignore;
+
+telegramService "Starting extracting MSCOCO JSON file.";
+WriteLog "Starting extracting MSCOCO JSON file." "INFO" |> ignore;
 
 for src in 0 .. (jsonContent.Length - 1) do
     for i in jsonContent[src].annotations do
-        let image = FindImageById src i.image_id;
+        try
+            let image = FindImageById src i.image_id;
 
-        let annotationString = (i.category_id - 1).ToString() 
-                                        + " " 
-                                        + i.bbox[0].ToString() 
-                                        + " " 
-                                        + i.bbox[1].ToString() 
-                                        + " " 
-                                        + i.bbox[2].ToString() 
-                                        + " " 
-                                        + i.bbox[3].ToString();
+            let annotationString = (i.category_id - 1).ToString() 
+                                            + " " 
+                                            + i.bbox[0].ToString() 
+                                            + " " 
+                                            + i.bbox[1].ToString() 
+                                            + " " 
+                                            + i.bbox[2].ToString() 
+                                            + " " 
+                                            + i.bbox[3].ToString();
 
-        let mutable transformAnnotation = YOLOAnnotation(i.image_id, (EnvironmentVariable.MSCOCO_IMAGE_FOLDER + image.file_name), cocoTypes.[src], [|annotationString|]);
+            let mutable transformAnnotation = YOLOAnnotation(i.image_id, (EnvironmentVariable.MSCOCO_IMAGE_FOLDER + image.file_name), cocoTypes.[src], [|annotationString|]);
 
-        try 
-            transformAnnotation <- FindAnnotationByImageId i.image_id;
-            transformAnnotation <- UpdateAnnotationByImageId i.image_id annotationString;
+            try 
+                transformAnnotation <- FindAnnotationByImageId i.image_id;
+                transformAnnotation <- UpdateAnnotationByImageId i.image_id annotationString;
+            with
+            | ex -> annotations <- Array.append annotations [| transformAnnotation |];
         with
-        | ex -> annotations <- Array.append annotations [| transformAnnotation |];
+        | ex ->
+            WriteLog ("Processing annotation ID of " + i.id.ToString() + " error with: " + ex.Message) "ERROR" |> ignore;
 
-        
+telegramService "MSCOCO extraction has finished. Starting transforming extracted MSCOCO into YOLO metadata.";
+WriteLog "MSCOCO extraction has finished. Starting transforming extracted MSCOCO into YOLO metadata." "INFO" |> ignore;
+
+
 for e in annotations do
-    let folderPath = EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/" + e.data_type + "/";
+    try
+        let folderPath = EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/" + e.data_type + "/";
 
-    Directory.CreateDirectory(folderPath) |> ignore;
+        Directory.CreateDirectory(folderPath) |> ignore;
 
-    let fileName = Path.GetFileName(e.image_filepath);
-    
-    let yoloAnnotationFilePath = folderPath + RemoveExtensionFromFileName(fileName) + ".txt";
-    
-    let mutable annotationsString: string = "";
+        let fileName = Path.GetFileName(e.image_filepath);
+        
+        let yoloAnnotationFilePath = folderPath + RemoveExtensionFromFileName(fileName) + ".txt";
+        
+        let mutable annotationsString: string = "";
 
-    for f in e.annotations do
-        annotationsString <- annotationsString + f + "\n";
+        for f in e.annotations do
+            annotationsString <- annotationsString + f + "\n";
 
-    use stream = new StreamWriter (yoloAnnotationFilePath, false);
-    
-    stream.WriteLine(annotationsString);
-    stream.Close();
+        use stream = new StreamWriter (yoloAnnotationFilePath, false);
+        
+        stream.WriteLine(annotationsString);
+        stream.Close();
 
-    // Copy file to the destinated image folder.
-    moveFile (e.image_filepath) (EnvironmentVariable.YOLO_IMAGE_FOLDER + e.data_type + fileName)
+        // Copy file to the destinated image folder.
+        moveFile (e.image_filepath) (EnvironmentVariable.YOLO_IMAGE_FOLDER + e.data_type + fileName)
+    with
+    | ex -> WriteLog ("Transforming MSCOCO to YOLO file encounter error at Image ID " + e.image_id.ToString() + " with message: " + ex.Message) "ERROR" |> ignore;
 
-
-telegramService "Done generating Yolo Output from MSCOCO";
+telegramService "COCO Converter service has completed successfully";
+WriteLog "COCO Converter service has completed successfully" "INFO" |> ignore;

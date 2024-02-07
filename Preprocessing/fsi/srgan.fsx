@@ -172,6 +172,23 @@ let telegramService (message: string) =
         response;
     } |> Async.RunSynchronously;
 
+let WriteLog (message: string) (logType: string) =
+    let currentTime = DateTime.Now;
+    let currentTimeInString = currentTime.ToString("yyyy-MM-dd H:m:s.FFFF zzz")
+    let currentDateInString = currentTime.ToString("yyyyMMdd")
+    let logToBeWritten = sprintf "[%s][%s] %s" currentTimeInString logType message
+    let pathToLog = Path.Combine("../../logs/", sprintf "%s.log" currentDateInString);
+
+    if not (File.Exists(pathToLog)) then
+        if not (Directory.Exists("../../logs/")) then
+            Directory.CreateDirectory("../../logs/") |> ignore;
+        use stream = new StreamWriter(pathToLog, false);
+
+        stream.WriteLine("");
+        stream.Close();
+
+    File.AppendAllText(pathToLog, logToBeWritten + "\n") |> ignore;
+
 let downscaleUpscaleImage (imagePath: string) =
     let downscaledImage: ImageDTO = DownscaleImage imagePath 0.30;
 
@@ -181,12 +198,19 @@ let downscaleUpscaleImage (imagePath: string) =
 
 let files = Directory.GetFiles(EnvironmentVariable.ORIGINAL_IMAGE_DIRECTORY);
 
-telegramService "Starting the data pre-processing operation";
+telegramService "Starting the upscale-downscale image generation operation";
+WriteLog "Starting the upscale-downscale image generation operation" "INFO" |> ignore;
+
     
 for i in files do
     printfn "Processing %s" i 
 
-    downscaleUpscaleImage i;
+    try
+        downscaleUpscaleImage i |> ignore;
+    with 
+    | ex ->
+        WriteLog ("Processing " + i + " error with: " + ex.Message) "ERROR" |> ignore;
 
 
-telegramService "Pre-Processing process has completed" ;
+telegramService "The upscale-downscale image generation operation has been completed" ;
+WriteLog "The upscale-downscale image generation operation has been completed" "INFO" |> ignore;
