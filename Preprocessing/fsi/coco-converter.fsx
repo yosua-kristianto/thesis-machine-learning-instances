@@ -219,6 +219,8 @@ let WriteLog (message: string) (logType: string) =
     let logToBeWritten = sprintf "[%s][%s][COCO_EXTRACTOR] %s" currentTimeInString logType message
     let pathToLog = Path.Combine("../../logs/", sprintf "%s.log" currentDateInString);
 
+    printfn "%s" message;
+
     if not (File.Exists(pathToLog)) then
         if not (Directory.Exists("../../logs/")) then
             Directory.CreateDirectory("../../logs/") |> ignore;
@@ -233,8 +235,12 @@ telegramService "Starting extracting MSCOCO JSON file.";
 WriteLog "Starting extracting MSCOCO JSON file." "INFO" |> ignore;
 
 for src in 0 .. (jsonContent.Length - 1) do
+    telegramService (sprintf "%s annotation data: %d" cocoTypes.[src] (jsonContent.[src].annotations.Length));
+
     for i in jsonContent[src].annotations do
         try
+            printfn "Extracting MSCOCO annotation with id %d" i.id
+
             let image = FindImageById src i.image_id;
 
             let annotationString = (i.category_id - 1).ToString() 
@@ -247,7 +253,7 @@ for src in 0 .. (jsonContent.Length - 1) do
                                             + " " 
                                             + i.bbox[3].ToString();
 
-            let mutable transformAnnotation = YOLOAnnotation(i.image_id, (EnvironmentVariable.MSCOCO_IMAGE_FOLDER + image.file_name), cocoTypes.[src], [|annotationString|]);
+            let mutable transformAnnotation = YOLOAnnotation(i.image_id, (EnvironmentVariable.MSCOCO_IMAGE_FOLDER + "/" + image.file_name), cocoTypes.[src], [|annotationString|]);
 
             try 
                 transformAnnotation <- FindAnnotationByImageId i.image_id;
@@ -264,11 +270,13 @@ WriteLog "MSCOCO extraction has finished. Starting transforming extracted MSCOCO
 
 for e in annotations do
     try
+        let fileName = Path.GetFileName(e.image_filepath);
+        printfn "Transforming MSCOCO annotation into YOLO for %s Image %s with ID %d" e.data_type fileName e.image_id
+
         let folderPath = EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/" + e.data_type + "/";
 
         Directory.CreateDirectory(folderPath) |> ignore;
 
-        let fileName = Path.GetFileName(e.image_filepath);
         
         let yoloAnnotationFilePath = folderPath + RemoveExtensionFromFileName(fileName) + ".txt";
         
@@ -283,7 +291,7 @@ for e in annotations do
         stream.Close();
 
         // Copy file to the destinated image folder.
-        moveFile (e.image_filepath) (EnvironmentVariable.YOLO_IMAGE_FOLDER + e.data_type + fileName)
+        moveFile (e.image_filepath) (EnvironmentVariable.YOLO_IMAGE_FOLDER + "/" + e.data_type + "/")
     with
     | ex -> WriteLog ("Transforming MSCOCO to YOLO file encounter error at Image ID " + e.image_id.ToString() + " with message: " + ex.Message) "ERROR" |> ignore;
 
