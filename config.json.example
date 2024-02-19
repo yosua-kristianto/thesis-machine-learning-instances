@@ -1,18 +1,20 @@
 {
+    // SRGAN
     "ORIGINAL_IMAGE_DIRECTORY": "string",
     "TEMP_LOWRES_IMAGE_FOLDER_PATH": "string",
     "DOWNSCALED_UPSCALED_IMAGE_FOLDER_PATH": "string",
     "LABELS_ARRAY_FOLDER_PATH": "string",
+    "OCR_GROUND_TRUTH_PATH": "string",
+
+    // YOLO
+    "YOLO_ANNOTATION_FOLDER_OUTPUT": "string",
+    "MSCOCO_ANNOTATION_FOLDER_INPUT": "string",
+    "MSCOCO_IMAGE_FOLDER": "string",
+    "YOLO_IMAGE_FOLDER": "string",
+
+    "GDRIVE_API_SCOPES": []
+
     
     "TELEGRAM_BOT_ID": "string",
     "CHAT_ID": -0,
-
-    "YOLO_ANNOTATION_FOLDER_OUTPUT": "string",
-    "MSCOCO_ANNOTATION_FOLDER_INPUT": "string",
-
-    "YOLO_IMAGE_TRAIN_FOLDER": "string",
-    "YOLO_IMAGE_TEST_FOLDER": "string",
-    "YOLO_IMAGE_VAL_FOLDER": "string",
-
-    "GDRIVE_API_SCOPES": []
 }
