@@ -9,18 +9,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keras-importer", "Model\ker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pytorch-importer", "Model\pytorch-importer\pytorch-importer.csproj", "{A7D51EBF-926C-43B7-9B62-710E68C075AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCR Engine", "Model\OCR Engine\OCR Engine.csproj", "{3A9FE240-81CC-43F1-82A3-D0596771DB64}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tesseract-integrator", "Model\tesseract-integrator\tesseract-integrator.csproj", "{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helper", "Helper", "{9ACB766F-5181-4E83-8898-7FFFC9839E6D}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "GDrive Integrator", "GDrive Integrator\GDrive Integrator.pyproj", "{F01DB768-9F52-4312-AC68-765C393B63D0}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "gdrive-integrator", "GDrive Integrator\gdrive-integrator.pyproj", "{F01DB768-9F52-4312-AC68-765C393B63D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD8A5690-1BFA-4469-8D16-8580F1F3E535}"
 	ProjectSection(SolutionItems) = preProject
 		config.json = config.json
 	EndProjectSection
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "upload-controller", "Upload Controller\upload-controller.fsproj", "{223F6447-DDCE-4552-8AF4-C9891313A477}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,16 +36,16 @@ Global
 		{A7D51EBF-926C-43B7-9B62-710E68C075AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7D51EBF-926C-43B7-9B62-710E68C075AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7D51EBF-926C-43B7-9B62-710E68C075AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A9FE240-81CC-43F1-82A3-D0596771DB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A9FE240-81CC-43F1-82A3-D0596771DB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A9FE240-81CC-43F1-82A3-D0596771DB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A9FE240-81CC-43F1-82A3-D0596771DB64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F01DB768-9F52-4312-AC68-765C393B63D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F01DB768-9F52-4312-AC68-765C393B63D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223F6447-DDCE-4552-8AF4-C9891313A477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223F6447-DDCE-4552-8AF4-C9891313A477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223F6447-DDCE-4552-8AF4-C9891313A477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223F6447-DDCE-4552-8AF4-C9891313A477}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,9 +53,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{169493AD-BBD1-4A95-8BB8-1B974B8DA160} = {ED7A1B76-C0E5-4919-8885-1D1708845855}
 		{A7D51EBF-926C-43B7-9B62-710E68C075AE} = {ED7A1B76-C0E5-4919-8885-1D1708845855}
-		{3A9FE240-81CC-43F1-82A3-D0596771DB64} = {ED7A1B76-C0E5-4919-8885-1D1708845855}
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D} = {ED7A1B76-C0E5-4919-8885-1D1708845855}
 		{F01DB768-9F52-4312-AC68-765C393B63D0} = {9ACB766F-5181-4E83-8898-7FFFC9839E6D}
+		{223F6447-DDCE-4552-8AF4-C9891313A477} = {9ACB766F-5181-4E83-8898-7FFFC9839E6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F24ECA30-3874-462C-9AC9-0E245BF8F815}
