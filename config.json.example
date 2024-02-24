@@ -17,4 +17,6 @@
     
     "TELEGRAM_BOT_ID": "string",
     "CHAT_ID": -0,
+
+    "DATABASE_CONNECTION": "string",
 }
