@@ -3,13 +3,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f01db768-9f52-4312-ac68-765c393b63d0</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectHome>
+    </ProjectHome>
     <StartupFile>GDrive_Integrator.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>GDrive Integrator</Name>
+    <Name>gdrive-integrator</Name>
     <RootNamespace>GDrive Integrator</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|google-drive-sdk</InterpreterId>
   </PropertyGroup>
