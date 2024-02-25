@@ -5,27 +5,26 @@ open System.ComponentModel.DataAnnotations;
 open System.ComponentModel.DataAnnotations.Schema;
 
 [<Table("fla_tbl_registered_file")>]
-type RegisteredFile = {
+type RegisteredFile () = 
 
     [<Key>]
     [<Column("file_id")>]
-    FileId: string
+    member val FileId: string = "" with get, set
 
     [<Column("file_original_path")>]
-    FileOriginalPath: string
+    member val FileOriginalPath: string = "" with get, set
 
     [<Column("folder_code")>]
-    FolderCode: string
+    member val FolderCode: string = "" with get, set
 
     [<Column("folder_target")>]
-    FolderTarget: string
+    member val FolderTarget: string = "" with get, set
 
     [<Column("uploaded_at")>]
-    UploadedAt: Nullable<DateTime>
+    member val UploadedAt: Nullable<DateTime> = new System.Nullable<DateTime>() with get, set
 
     [<Column("created_at")>]
-    CreatedAt: DateTime
+    member val CreatedAt: DateTime = new DateTime() with get, set
 
     [<Column("deleted_at")>]
-    DeletedAt: Nullable<DateTime>
-};
+    member val DeletedAt: Nullable<DateTime> = new System.Nullable<DateTime>() with get, set

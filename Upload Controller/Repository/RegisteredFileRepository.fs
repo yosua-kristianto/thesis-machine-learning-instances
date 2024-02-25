@@ -31,15 +31,15 @@ type RegisteredFileRepository(ctx: DatabaseContext) =
         member this.UpdateUploadedAtByRegisteredFile (id: string, folderTarget: string) =
             let data = ctx.DataFile.Find([| id |]);
 
-            let queriedEntity: RegisteredFile = {
-                UploadedAt = new DateTime();
-                FileId = data.FileId;
-                FileOriginalPath = data.FileOriginalPath;
-                FolderCode = data.FolderCode;
-                CreatedAt = data.CreatedAt;
-                FolderTarget = folderTarget;
-                DeletedAt = new System.Nullable<DateTime>();
-            }
+            let entity: RegisteredFile = new RegisteredFile();
 
-            ctx.DataFile.Update(queriedEntity) |> ignore;
+            entity.UploadedAt <- new DateTime();
+            entity.FileId <- data.FileId;
+            entity.FileOriginalPath <- data.FileOriginalPath;
+            entity.FolderCode <- data.FolderCode;
+            entity.CreatedAt <- data.CreatedAt;
+            entity.FolderTarget <- folderTarget;
+            entity.DeletedAt <- new System.Nullable<DateTime>();
+
+            ctx.DataFile.Update(entity) |> ignore;
             ctx.SaveChanges() |> ignore;
