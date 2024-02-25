@@ -56,9 +56,11 @@ let ConfigureServices (services : IServiceCollection) =
 
     4. Upload handler
 *)
-[<EntryPoint("Kinthil")>]
+[<EntryPointAttribute("")>]
 let Main (argv) =
     AppBanner
+
+    printfn "After AppBanner"
 
     // Step 1
     let folderSettings: DataFrame array = FolderSettingExtractor.ExtractCsv;
@@ -83,10 +85,11 @@ let Main (argv) =
     let resultSet = repository.GetAllUnuploadedRegisteredFiles();
 
     for i in resultSet do
-        printfn "%s" i.FileId
+        printfn "Data %s" i.FileId
 
     0;
 
+Main "";
 
 (*
     Algorithm below are applied to do the job:
