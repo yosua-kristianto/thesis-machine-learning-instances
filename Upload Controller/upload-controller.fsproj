@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Upload_Controller</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <Compile Include="Model\Entity\RegisteredFile.fs" />
+    <Compile Include="Model\Entity\CsvDataFrame.fs" />
+    <Compile Include="Model\Dto\EnvironmentVariableRegisteredKeys.fs" />
+    <Compile Include="Model\Dto\TelegramRequestDto.fs" />
+    <Compile Include="Facade\ProgressBarHandler.fs" />
+      <Compile Include="Facade\Log.fs" />
+      <Compile Include="Facade\TerminalHandler.fs" />
+    <Compile Include="Facade\EnvironmentVariable.fs" />
+    <Compile Include="Config\DatabaseConnection.fs" />
+    <Compile Include="Config\FolderSettingExtractor.fs" />
+    <Compile Include="Services\TelegramService.fs" />
+    <Compile Include="Repository\IRegisteredFileRepository.fs" />
+    <Compile Include="Repository\RegisteredFileRepository.fs" />
+    <Compile Include="Handler\DocBankHandler.fs" />
+    <Compile Include="Handler\CommandHandler.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Deedle" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
+    <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.200" />
+  </ItemGroup>
+
+</Project>

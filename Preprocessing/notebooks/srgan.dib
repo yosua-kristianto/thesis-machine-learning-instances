@@ -177,6 +177,8 @@ let ConvertImageToArray (imagePath: string) =
 
 type TensorDatasetDTO = { LowRes: Array; Target: Array; }
 
+
+/// <deprecated>This function is no longer possible to be exist</deprecated>
 let SaveArrayToFile (imagePath) (lowresArrayData) (originalArrayData) =
     let tensor: TensorDatasetDTO = { LowRes = lowresArrayData; Target = originalArrayData; }
 
