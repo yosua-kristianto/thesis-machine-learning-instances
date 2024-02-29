@@ -12,9 +12,10 @@
     <Compile Include="Model\Entity\CsvDataFrame.fs" />
     <Compile Include="Model\Dto\EnvironmentVariableRegisteredKeys.fs" />
     <Compile Include="Model\Dto\TelegramRequestDto.fs" />
-    <None Include="Facade\TerminalHandler.fs" />
+    <Compile Include="Facade\ProgressBarHandler.fs" />
+      <Compile Include="Facade\Log.fs" />
+      <Compile Include="Facade\TerminalHandler.fs" />
     <Compile Include="Facade\EnvironmentVariable.fs" />
-    <Compile Include="Facade\Log.fs" />
     <Compile Include="Config\DatabaseConnection.fs" />
     <Compile Include="Config\FolderSettingExtractor.fs" />
     <Compile Include="Services\TelegramService.fs" />
