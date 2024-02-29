@@ -9,7 +9,7 @@ type RegisteredFile () =
 
     [<Key>]
     [<Column("file_id")>]
-    member val FileId: string = "" with get, set
+    member val FileId: Guid = new Guid() with get, set
 
     [<Column("file_original_path")>]
     member val FileOriginalPath: string = "" with get, set
@@ -17,6 +17,7 @@ type RegisteredFile () =
     [<Column("folder_code")>]
     member val FolderCode: string = "" with get, set
 
+    // This data may be obselete
     [<Column("folder_target")>]
     member val FolderTarget: string = "" with get, set
 
