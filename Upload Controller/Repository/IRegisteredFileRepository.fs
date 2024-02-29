@@ -38,14 +38,14 @@ type IRegisteredFileRepository =
 
         This function run query to mark whether the registered file has been uploaded successfully.
 
-        @param string
+        @param Guid
         -> This parameter refers to FileId.
 
         @param string
         -> This parameter refers to the folder id of the location where the file is uploaded.
         Storing drive's ID.
     *)
-    abstract member UpdateUploadedAtByRegisteredFile: string * string -> unit
+    abstract member UpdateUploadedAtByRegisteredFile: Guid * string -> unit
 
     (*
         CreateRegisteredFile

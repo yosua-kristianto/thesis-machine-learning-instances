@@ -33,7 +33,7 @@ type RegisteredFileRepository(ctx: DatabaseContext) =
                     
             let file: RegisteredFile = new RegisteredFile();
             file.FileId <- newId;
-            file.FileOriginalPath <- originalPath;
+            file.FileOriginalPath <- originalPath.Replace("\\", "//");
             file.FolderCode <- folderCode;
 
             ctx.DataFile.Add(file) |> ignore;
@@ -45,6 +45,7 @@ type RegisteredFileRepository(ctx: DatabaseContext) =
             let query: Linq.IQueryable<RegisteredFile> = query {
                 for file in ctx.DataFile do
                 where (file.DeletedAt = new System.Nullable<DateTime>())
+                where (file.UploadedAt = new System.Nullable<DateTime>())
                 select file
             }
 
@@ -62,18 +63,11 @@ type RegisteredFileRepository(ctx: DatabaseContext) =
             let resultSet = query |> Seq.toArray;
             resultSet.[0];
 
-        member this.UpdateUploadedAtByRegisteredFile (id: string, folderTarget: string) =
-            let data = ctx.DataFile.Find([| id |]);
-
-            let entity: RegisteredFile = new RegisteredFile();
+        member this.UpdateUploadedAtByRegisteredFile (id: Guid, folderTarget: string) =
+            let entity: RegisteredFile = (this :> IRegisteredFileRepository).GetRegisteredFileById id;
 
             entity.UploadedAt <- new DateTime();
-            entity.FileId <- data.FileId;
-            entity.FileOriginalPath <- data.FileOriginalPath;
-            entity.FolderCode <- data.FolderCode;
-            entity.CreatedAt <- data.CreatedAt;
             entity.FolderTarget <- folderTarget;
-            entity.DeletedAt <- new System.Nullable<DateTime>();
 
             ctx.DataFile.Update(entity) |> ignore;
             ctx.SaveChanges() |> ignore;
