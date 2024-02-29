@@ -82,8 +82,8 @@ type DocBankHandler (repository: IRegisteredFileRepository) =
         // Call out step 1
         let fileName = Path.GetFileName(fileFullPath);
 
-        let highresPath = EnvironmentVariable.ORIGINAL_IMAGE_DIRECTORY + fileName;
-        let labelPath = EnvironmentVariable.OCR_GROUND_TRUTH_PATH + fileName;
+        let highresPath = EnvironmentVariable.ORIGINAL_IMAGE_DIRECTORY + "\\" + fileName;
+        let labelPath = EnvironmentVariable.OCR_GROUND_TRUTH_PATH + "\\" + fileName;
 
         // Call out step 2
         let group: string = this.DecideSplitGroup();
@@ -93,10 +93,3 @@ type DocBankHandler (repository: IRegisteredFileRepository) =
         repository.CreateRegisteredFile(fileFullPath, ("SRGAN_LOWRES_" + group)) |> ignore;
         repository.CreateRegisteredFile(highresPath, ("SRGAN_HIGHRES_" + group)) |> ignore;
         repository.CreateRegisteredFile(labelPath, ("SRGAN_LABEL_" + group)) |> ignore;
-
-
-
- //let errorMessage: string = Facade.TerminalHandler.Execute (sprintf "cd ../../../../; conda run -n google-drive-sdk python '.\\Gdrive Integrator\\main.py' --file_origin_path='%s' --folder_code='%s'" fileFullPath "SRGAN_LOWRES")
-
-        //if errorMessage.Equals("") = false then
-        //   Log.W errorMessage;
