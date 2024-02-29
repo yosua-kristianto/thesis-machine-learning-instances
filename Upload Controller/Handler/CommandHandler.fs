@@ -52,6 +52,7 @@ module CommandHandler =
                             | "YOLO_TRAIN_LABEL" -> EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/Train"
                             | "YOLO_TEST_LABEL" -> EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/Test"
                             | "YOLO_VAL_LABEL" -> EnvironmentVariable.YOLO_ANNOTATION_FOLDER_OUTPUT + "/Val"
+                            | _ -> "Nah I'd Win"
 
     
     (*
@@ -62,38 +63,48 @@ module CommandHandler =
         This function will skip SRGAN_HIGHRES and SRGAN_LABEL functionality since the DocBankHandler
         will handle the file directly by its file name.
     *)
-    let CommandParser (dataframe: DataFrame) (repository: IRegisteredFileRepository) =
+    let CommandParser (dataframe: DataFrame) (repository: IRegisteredFileRepository): unit =
 
         let mutable isSRGANProcessed: bool = false;
 
-        if dataframe.FOLDER_CODE.Contains "SRGAN" && dataframe.FOLDER_CODE <> "SRGAN_LOWRES" then
-            //printfn "%s is skipped since it will be controlled directly from the LOWRES version." dataframe.FOLDER_CODE;
-            ()
+        if dataframe.FOLDER_CODE.Contains "SRGAN" && dataframe.FOLDER_CODE <> "SRGAN_LOWRES" then () else
+            // Get files from folder
+            let folderFiles = Directory.GetFiles(TranslateFolderCodeToLocalPath dataframe.FOLDER_CODE);
 
-        // Init The DocBankHandler and do the operation
-        if dataframe.FOLDER_CODE.Equals("SRGAN_LOWRES") then
-            let handler = new DocBankHandler(repository);
-
-            // Get files from lowres folder
-            let lowresFiles = Directory.GetFiles(TranslateFolderCodeToLocalPath dataframe.FOLDER_CODE);
-
-            // Count total files within the folder
-            handler.AllCount <- lowresFiles.Length;
-
-            // Train test split
-            // The test using "ceil" instead of round or floor, to round up in case count - train / 2 getting 1 modulus.
-            handler.TrainTreshold <- int(round(float(handler.AllCount) * 0.7));
-            handler.TestTreshold <- int(ceil(float((handler.AllCount - handler.TrainTreshold)) / 2.0));
-            handler.ValTreshold <- handler.AllCount - handler.TrainTreshold - handler.TestTreshold
-
+            // Terminal iteration flagging
             let mutable iteration: int = 0;
-            let disposable, updateProgress = tqdm handler.AllCount "SRGAN Progressor"
 
-            printfn "Processing all SRGAN related files.";
-            for e in lowresFiles do
-                handler.ProcessAllFiles(Path.GetFullPath(e));
-                iteration <- iteration + 1;
-                updateProgress iteration;
-            disposable.Dispose();
-                
+            // Init The DocBankHandler and do the operation
+            if dataframe.FOLDER_CODE.Equals("SRGAN_LOWRES") then
+                let handler = new DocBankHandler(repository);
+
+                // Count total files within the folder
+                handler.AllCount <- folderFiles.Length;
+
+                // Train test split
+                // The test using "ceil" instead of round or floor, to round up in case count - train / 2 getting 1 modulus.
+                handler.TrainTreshold <- int(round(float(handler.AllCount) * 0.7));
+                handler.TestTreshold <- int(ceil(float((handler.AllCount - handler.TrainTreshold)) / 2.0));
+                handler.ValTreshold <- handler.AllCount - handler.TrainTreshold - handler.TestTreshold;
+
+                let disposable, updateProgress = tqdm handler.AllCount "SRGAN Progressor";
+
+                // Progress Bar
+                printfn "Processing all SRGAN related files.";
+                for e in folderFiles do
+                    handler.ProcessAllFiles(Path.GetFullPath(e));
+                    iteration <- iteration + 1;
+                    updateProgress iteration;
+                disposable.Dispose();
+            else
+                let disposable, updateProgress = tqdm folderFiles.Length (sprintf "%s Progresssor" dataframe.FOLDER_CODE);
+
+                printfn "Processing %s" dataframe.FOLDER_CODE;
+
+                // Progress Bar
+                for e in folderFiles do
+                    repository.CreateRegisteredFile(e, dataframe.FOLDER_CODE) |> ignore;
+                    iteration <- iteration + 1;
+                    updateProgress iteration;
+                disposable.Dispose();
 

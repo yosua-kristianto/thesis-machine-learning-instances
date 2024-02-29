@@ -21,7 +21,6 @@
     <Compile Include="Services\TelegramService.fs" />
     <Compile Include="Repository\IRegisteredFileRepository.fs" />
     <Compile Include="Repository\RegisteredFileRepository.fs" />
-    <Compile Include="Handler\DocLayNetHandler.fs" />
     <Compile Include="Handler\DocBankHandler.fs" />
     <Compile Include="Handler\CommandHandler.fs" />
     <Compile Include="Program.fs" />
