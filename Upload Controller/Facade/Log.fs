@@ -57,7 +57,7 @@ module Log =
         Stands for Info Log
     *)
     let I (message: string) = 
-        LogWriter.Write message "INFO"
+        LogWriter.Write message "INFO" |> ignore;
 
     (*
         E
@@ -78,14 +78,14 @@ module Log =
         Stands for Verbose log
     *)
     let V (message: string) =
-        LogWriter.Write message "VERBOSE";
+        LogWriter.Write message "VERBOSE" |> ignore;
 
     (*
         W
         Stands for Warning log
     *)
     let W (message: string) =
-        LogWriter.Write message "WARNING";
+        LogWriter.Write message "WARNING" |> ignore;
         
 
 
