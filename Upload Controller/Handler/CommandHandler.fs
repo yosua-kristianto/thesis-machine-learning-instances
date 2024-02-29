@@ -7,6 +7,7 @@ open Model.Entity;
 open Facade.EnvironmentVariable;
 open Facade.ProgressBarHandler;
 open Repository;
+open Facade;
 
 (*
     Define Command Pattern
@@ -108,3 +109,23 @@ module CommandHandler =
                     updateProgress iteration;
                 disposable.Dispose();
 
+    let InvokeUpload (repository: IRegisteredFileRepository): unit = 
+        
+        let unuploadedFiles: RegisteredFile array = repository.GetAllUnuploadedRegisteredFiles();
+
+        let mutable iteration: int = 0;
+
+        let disposable, updateProgress = tqdm unuploadedFiles.Length "GDrive Integrator Integration";
+
+        printfn "Uploading %d files." unuploadedFiles.Length;
+        for e in unuploadedFiles do
+            let errorMessage: string = Facade.TerminalHandler.Execute (sprintf "cd ../../../../; conda run -n google-drive-sdk python '.\\Gdrive Integrator\\main.py' --file_origin_path='%s' --folder_code='%s'" e.FileOriginalPath e.FolderCode)
+
+            if errorMessage.Equals("") = false then
+               Log.W errorMessage;
+            else
+                repository.UpdateUploadedAtByRegisteredFile(e.FileId, "") |> ignore;
+
+            iteration <- iteration + 1;
+            updateProgress iteration;
+        disposable.Dispose();

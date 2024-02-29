@@ -104,6 +104,10 @@ let Main (argv) =
     for folder in folderSettings do
         CommandParser folder repository |> ignore;
 
+    printfn "\n\n";
+
+    InvokeUpload repository |> ignore;
+    
     0;
 
 Main "";
