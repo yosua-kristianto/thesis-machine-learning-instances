@@ -1,11 +1,12 @@
-﻿open Config;
-open Model.Entity;
-open Microsoft.Extensions.DependencyInjection;
+﻿open Microsoft.Extensions.DependencyInjection;
 open Microsoft.EntityFrameworkCore;
-open Facade.EnvironmentVariable;
 open SQLitePCL;
 
+open Config;
+open Facade.EnvironmentVariable;
+open Model.Entity;
 open Repository;
+open Handler.CommandHandler;
 
 (*
 
@@ -51,16 +52,31 @@ let ConfigureServices (services : IServiceCollection) =
         this handler used to control the treatment of the file.
         
     3. SQLite database integration
-        Before upload is conducted, for each files that want to be uploaded must be saved 
-        to the SQLite database. This prepare the file t
+        Before upload is conducted, for each files information that will be uploaded must be saved 
+        to the SQLite database. In this endeavour, the Entity Framework Core SQLite is employed. 
+        Therefore, a dependency injection pattern, and OO approach is required to be conducted.
 
     4. Upload handler
+        This handler have some algorithm below:
+            Algorithm below are applied to do the job:
+
+            4.1. Collect all datas within csv file to be uploaded
+            4.2. For every datas within the csv file:
+            4.2.1 Navigate to the directory within the csv file
+            4.2.2 For every files within the Directory
+            4.2.2.1 If the folder code include SRGAN
+            4.2.2.1.1 -> Randomize whether the data will be treated as Train / Test / Val -> 7 : 1.5 : 1.5
+            4.2.2.1.2 -> Setup the target upload folder ID to the decided Train / Test / Val
+            4.2.2.2 Save the file to the Database as an unuploaded state.
+            4.2.3 For every saved files
+            4.2.3.1 Try to upload the file using GDrive Integrator script 
+            4.2.3.2 If the upload is successful
+            4.2.3.3 Save the file state as success within some persistance (Undetermined. May use SQLite)
 *)
+        
 [<EntryPointAttribute("")>]
 let Main (argv) =
     AppBanner
-
-    printfn "After AppBanner"
 
     // Step 1
     let folderSettings: DataFrame array = FolderSettingExtractor.ExtractCsv;
@@ -71,58 +87,25 @@ let Main (argv) =
     // Create service collection
     let services = new ServiceCollection()
 
+    // Step 3
+
+    // Configuring DI
     // Configure services
     ConfigureServices services
-
-    // Build service provider
     let serviceProvider = services.BuildServiceProvider()
-
-    // Resolve DatabaseContext
+    
+    // Registering DI
     let ctx = serviceProvider.GetService<DatabaseContext>()
 
-    let repository: IRegisterdFileRepository = new RegisteredFileRepository(ctx);
+    // Connecting to SQL
+    let repository: IRegisteredFileRepository = new RegisteredFileRepository(ctx);
 
-    let resultSet = repository.GetAllUnuploadedRegisteredFiles();
-
-    for i in resultSet do
-        printfn "Data %s" i.FileId
+    // Step 4
+    for folder in folderSettings do
+        CommandParser folder repository |> ignore;
 
     0;
 
 Main "";
 
-(*
-    Algorithm below are applied to do the job:
 
-    1. Collect all datas within csv file to be uploaded
-    2. For every datas within the csv file:
-    2.1 Navigate to the directory within the csv file
-    2.2 For every files within the Directory
-    2.2.1 Try to upload the file using GDrive Integrator script 
-    2.2.2 If the upload is successful
-    2.2.3 Save the file state as success within some persistance (Undetermined. May use SQLite)
-    2.2.4 
-*)
-
-// let ProgressBarFactory (total : int) =
-//     let updateProgress (current : int) =
-//         let progress = float current / float total * 100.
-//         printf "\rProgress: [%-20s] %.2f%%" (String.replicate (current * 20 / total) "#") progress
-//         Console.Out.Flush() |> ignore
-
-//     let dispose() =
-//         printfn ""
-
-//     { new System.IDisposable with
-//         member this.Dispose() = dispose() }, updateProgress
-
-// let totalIterations = 100
-// let disposable, updateProgress = ProgressBarFactory totalIterations
-
-// for e = 1 to 100 do
-//     printfn "Doing iteration for process %d" e;
-//     for i = 1 to totalIterations do
-//         // Do your iteration work here
-//         Thread.Sleep(100);
-//         updateProgress i
-//     disposable.Dispose()
