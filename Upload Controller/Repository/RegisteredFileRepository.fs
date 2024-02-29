@@ -6,7 +6,41 @@ open Config;
 
 type RegisteredFileRepository(ctx: DatabaseContext) =
 
-    interface IRegisterdFileRepository with
+    interface IRegisteredFileRepository with
+        member this.GetRegisteredFileById(id: Guid): RegisteredFile = 
+            let query: Linq.IQueryable<RegisteredFile> = query {
+                for file in ctx.DataFile do
+                where (file.FileId = id)
+                where (file.DeletedAt = new System.Nullable<DateTime>())
+                select file
+            }
+
+            let resultSet = query |> Seq.toArray;
+            resultSet.[0];
+
+        member this.CreateRegisteredFile(originalPath: string, folderCode: string): RegisteredFile = 
+            
+            let mutable newId: Guid = Guid.NewGuid();
+            let mutable flag: bool = false;
+
+            while not flag do
+                try
+                    // If this throw exception, then the id is not yet used.
+                    (this :> IRegisteredFileRepository).GetRegisteredFileById newId |> ignore;
+                    newId <- (Guid.NewGuid())
+                with
+                | ex -> flag <- true
+                    
+            let file: RegisteredFile = new RegisteredFile();
+            file.FileId <- newId;
+            file.FileOriginalPath <- originalPath;
+            file.FolderCode <- folderCode;
+
+            ctx.DataFile.Add(file) |> ignore;
+            ctx.SaveChanges() |> ignore;
+
+            (this :> IRegisteredFileRepository).GetRegisteredFileById file.FileId;
+
         member this.GetAllUnuploadedRegisteredFiles () =
             let query: Linq.IQueryable<RegisteredFile> = query {
                 for file in ctx.DataFile do

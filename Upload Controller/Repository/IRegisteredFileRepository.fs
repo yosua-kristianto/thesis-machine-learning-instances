@@ -1,5 +1,7 @@
 ﻿namespace Repository
 
+open System;
+
 open Model.Entity;
 
 (*
@@ -7,7 +9,7 @@ open Model.Entity;
 
     This repository contains every integration within RegistedFile table.
 *)
-type IRegisterdFileRepository =
+type IRegisteredFileRepository =
     
     (*
         GetAllUnuploadedRegisteredFiles
@@ -44,3 +46,28 @@ type IRegisterdFileRepository =
         Storing drive's ID.
     *)
     abstract member UpdateUploadedAtByRegisteredFile: string * string -> unit
+
+    (*
+        CreateRegisteredFile
+
+        This function run query to do INSERT statement for registered file object.
+
+        @param string
+        -> This parameter refers to FileOriginalPath
+
+        @param string
+        -> This parameter refers to FolderCode
+
+        See RegisteredFile for more details.
+    *)
+    abstract member CreateRegisteredFile: string * string -> RegisteredFile
+
+    (*
+        GetRegisteredFileById
+
+        This function run query to get a registered file object by its id.
+
+        @param string
+        -> Refers to FileId
+    *)
+    abstract member GetRegisteredFileById: Guid -> RegisteredFile
