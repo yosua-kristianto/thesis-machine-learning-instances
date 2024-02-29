@@ -19,7 +19,7 @@ open Facade;
     4. Iterate through the Frame, and append the data to the array from number 2
 *)
 
-// Step 1
+// Step 1 : Checkout Model.Entity.DataFrame.fs
 
 module FolderSettingExtractor =
 
