@@ -7,7 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include=".gitignore" />
+      <Compile Include="Model\Entity\ImageDTO.fs" />
+      <Compile Include="Model\Dto\TelegramRequestDTO.fs" />
+      <Compile Include="Model\Dto\RegisteredKeys.fs" />
+      <Compile Include="Facade\Log.fs" />
+
+      <Compile Include="Facade\EnvironmentVariable.fs" />
+      <Compile Include="Services\TelegramService.fs" />
+      <Compile Include="Handler\ImageProcessorHandler.fs" />
+
+      <None Include=".gitignore" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
