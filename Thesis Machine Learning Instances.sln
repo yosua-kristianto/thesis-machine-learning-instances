@@ -22,6 +22,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "upload-controller", "Upload Controller\upload-controller.fsproj", "{223F6447-DDCE-4552-8AF4-C9891313A477}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pre-Processor", "Pre-Processor", "{EAF08784-B33D-423F-99AC-5583F0804BEC}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "sr-preprocessor", "Pre-Processing\sr-preprocessor\sr-preprocessor.fsproj", "{B0AAD489-F487-4E30-B670-48F936216BC6}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "mscoco-yolo-converter", "Pre-Processing\mscoco-yolo-converter\mscoco-yolo-converter.fsproj", "{20722C4F-F60F-40AD-BEAD-277826E0500F}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "pgan-summarization-preprocessor", "Pre-Processing\pgan-summarization-preprocessor\pgan-summarization-preprocessor.pyproj", "{20AF362C-9A13-4654-9D26-CD7B1E618914}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +54,16 @@ Global
 		{223F6447-DDCE-4552-8AF4-C9891313A477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{223F6447-DDCE-4552-8AF4-C9891313A477}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{223F6447-DDCE-4552-8AF4-C9891313A477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0AAD489-F487-4E30-B670-48F936216BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0AAD489-F487-4E30-B670-48F936216BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0AAD489-F487-4E30-B670-48F936216BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0AAD489-F487-4E30-B670-48F936216BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20722C4F-F60F-40AD-BEAD-277826E0500F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20722C4F-F60F-40AD-BEAD-277826E0500F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20722C4F-F60F-40AD-BEAD-277826E0500F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20722C4F-F60F-40AD-BEAD-277826E0500F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20AF362C-9A13-4654-9D26-CD7B1E618914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AF362C-9A13-4654-9D26-CD7B1E618914}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +74,9 @@ Global
 		{E10EAAC4-A0FE-4C1D-B665-B915113C0D7D} = {ED7A1B76-C0E5-4919-8885-1D1708845855}
 		{F01DB768-9F52-4312-AC68-765C393B63D0} = {9ACB766F-5181-4E83-8898-7FFFC9839E6D}
 		{223F6447-DDCE-4552-8AF4-C9891313A477} = {9ACB766F-5181-4E83-8898-7FFFC9839E6D}
+		{B0AAD489-F487-4E30-B670-48F936216BC6} = {EAF08784-B33D-423F-99AC-5583F0804BEC}
+		{20722C4F-F60F-40AD-BEAD-277826E0500F} = {EAF08784-B33D-423F-99AC-5583F0804BEC}
+		{20AF362C-9A13-4654-9D26-CD7B1E618914} = {EAF08784-B33D-423F-99AC-5583F0804BEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F24ECA30-3874-462C-9AC9-0E245BF8F815}
