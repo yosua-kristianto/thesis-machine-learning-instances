@@ -27,7 +27,7 @@ module ImageProcessorHandler =
             This parameter represent the ratio of the image to be downscaled. 
             Must be a real positive number less than 1.0 otherwise the size get bigger.
     *)
-    let DownscaleImage (imagePath: string) (downscaleRatio: float): ImageDTO = 
+    let DownscaleImage (imagePath: string) (downscaleRatio: float): DownscaledImageDTO = 
         let image = Image.Load(imagePath);
 
         let fileName = Path.GetFileName(imagePath);
@@ -46,7 +46,7 @@ module ImageProcessorHandler =
 
         image.Save(lowresImagePath);
 
-        ImageDTO(lowresImagePath, originalWidth, originalHeight);
+        DownscaledImageDTO(lowresImagePath, originalWidth, originalHeight);
 
     (*
         ScaleImageToSpecificSize
@@ -63,7 +63,7 @@ module ImageProcessorHandler =
 
         originImage.Save(rescaledImagePath);
 
-        ImageDTO(rescaledImagePath, targetWidth, targetHeight);
+        DownscaledImageDTO(rescaledImagePath, targetWidth, targetHeight);
 
     (*
         ConvertImageToArray
@@ -100,10 +100,22 @@ module ImageProcessorHandler =
         let tensorPayload: string = JsonConvert.SerializeObject(tensor);
         File.WriteAllText(EnvironmentVariable.LABELS_ARRAY_FOLDER_PATH+"/"+fileName+".json", tensorPayload);
 
-    let DownscaleUpscaleImage (imagePath: string) =
-        let downscaledImage: ImageDTO = DownscaleImage imagePath 0.30;
+    (*
+    ------------------------------------------------------------------------------------------------
+        <since date="20240229"/>
+    ------------------------------------------------------------------------------------------------
+        HandleDownscaleUpscaleImage is a function to handle the Down-Upscaling image activity. 
+        This function will directly call all functions within this Handler file that directly operates 
+        DownscaleImage and UpscaleImage. Here is the algorithm below:
+
+        1. Call DownscaleImage with parameter of the path of the image (`imagePath`) and downsizing it into 0.3 ratio
+        2. Call ScaleImageToSpecificSize with parameter of the path of the Downscaled image (`downscaledImage.ImagePath`)
+            and resizing it with the original size that taken from denoted downscaledImage.Width and downscaledImage.Height
+    *)
+    let HandleDownscaleUpscaleImage (imagePath: string) =
+        let downscaledImage: DownscaledImageDTO = DownscaleImage imagePath 0.30;
 
         // Revert the size into original size
-        ScaleImageToSpecificSize downscaledImage.ImagePath downscaledImage.Width downscaledImage.Height;
+        ScaleImageToSpecificSize downscaledImage.ImagePath downscaledImage.OriginalWidth downscaledImage.OriginalHeight;
 
     

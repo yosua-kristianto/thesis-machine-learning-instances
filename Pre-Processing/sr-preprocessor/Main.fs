@@ -22,7 +22,7 @@ for i in files do
     printfn "Processing %s" i 
 
     try
-        DownscaleUpscaleImage i |> ignore;
+        HandleDownscaleUpscaleImage i |> ignore;
     with 
     | ex ->
         Log.E ("Processing " + i + " error with: " + ex.Message) |> ignore;
