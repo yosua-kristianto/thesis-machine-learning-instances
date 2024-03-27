@@ -10,6 +10,7 @@
       <Compile Include="Model\Entity\ImageDTO.fs" />
       <Compile Include="Model\Dto\TelegramRequestDTO.fs" />
       <Compile Include="Model\Dto\RegisteredKeys.fs" />
+      <Compile Include="Facade\TerminalHelper.fs" />
       <Compile Include="Facade\Log.fs" />
 
       <Compile Include="Facade\EnvironmentVariable.fs" />
