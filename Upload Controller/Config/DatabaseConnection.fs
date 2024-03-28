@@ -5,6 +5,9 @@ open Microsoft.EntityFrameworkCore;
 open Model.Entity;
 open Facade.EnvironmentVariable;
 
+open SQLitePCL;
+
+
 type DatabaseContext(options: DbContextOptions<DatabaseContext>) = 
     inherit DbContext(options);
 
@@ -20,3 +23,8 @@ type DatabaseContext(options: DbContextOptions<DatabaseContext>) =
 
     override this.OnModelCreating(modelBuilder: ModelBuilder) =
         base.OnModelCreating(modelBuilder);
+
+
+module DatabaseInitializer =
+    let Initialzr = 
+        SQLitePCL.Batteries.Init();

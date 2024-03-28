@@ -82,7 +82,7 @@ type DocBankHandler (repository: IRegisteredFileRepository) =
         // Call out step 1
         let fileName = Path.GetFileName(fileFullPath);
 
-        let highresPath = EnvironmentVariable.ORIGINAL_IMAGE_DIRECTORY + "\\" + fileName;
+        let highresPath = EnvironmentVariable.ORIGINAL_IMAGE_CROPPING_DIRECTORY + "\\" + fileName;
         let labelPath = EnvironmentVariable.OCR_GROUND_TRUTH_PATH + "\\" + fileName;
 
         // Call out step 2
@@ -90,6 +90,8 @@ type DocBankHandler (repository: IRegisteredFileRepository) =
 
         // Call out step 3
         
-        repository.CreateRegisteredFile(fileFullPath, ("SRGAN_LOWRES_" + group)) |> ignore;
-        repository.CreateRegisteredFile(highresPath, ("SRGAN_HIGHRES_" + group)) |> ignore;
-        repository.CreateRegisteredFile(labelPath, ("SRGAN_LABEL_" + group)) |> ignore;
+        async {
+            repository.CreateRegisteredFile(fileFullPath, ("SRGAN_LOWRES_" + group)) |> ignore;
+            repository.CreateRegisteredFile(highresPath, ("SRGAN_HIGHRES_" + group)) |> ignore;
+            repository.CreateRegisteredFile(labelPath, ("SRGAN_LABEL_" + group)) |> ignore;
+        } |> Async.Start

@@ -115,7 +115,7 @@ module CommandHandler =
 
         let mutable iteration: int = 0;
 
-        let disposable, updateProgress = tqdm unuploadedFiles.Length "GDrive Integrator Integration";
+        let disposable, updateProgress = tqdm unuploadedFiles.Length "Uploading files with GDrive Integrator";
 
         printfn "Uploading %d files." unuploadedFiles.Length;
         for e in unuploadedFiles do

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "upload-controller": {
+      "commandName": "Project",
+      "commandLineArgs": "--register\r\n--upload"
+    }
+  }
+}

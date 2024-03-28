@@ -1,6 +1,5 @@
 ﻿open Microsoft.Extensions.DependencyInjection;
 open Microsoft.EntityFrameworkCore;
-open SQLitePCL;
 
 open Config;
 open Facade.EnvironmentVariable;
@@ -38,6 +37,29 @@ let ConfigureServices (services : IServiceCollection) =
         ()
     ) |> ignore;
 
+
+        
+let ConfigurationBuilder =
+
+    // Step 2
+    Config.DatabaseInitializer.Initialzr;
+
+    // Create service collection
+    let services = new ServiceCollection()
+
+    // Step 3
+
+    // Configuring DI
+    // Configure services
+    ConfigureServices services
+    let serviceProvider = services.BuildServiceProvider()
+    
+    // Registering DI
+    let ctx = serviceProvider.GetService<DatabaseContext>()
+
+    ctx;
+
+
 (*
     ## Main Script
     This is where the management and uploading algorithm doing some works. 
@@ -72,44 +94,38 @@ let ConfigureServices (services : IServiceCollection) =
             4.2.3.1 Try to upload the file using GDrive Integrator script 
             4.2.3.2 If the upload is successful
             4.2.3.3 Save the file state as success within some persistance (Undetermined. May use SQLite)
+
+--------------------------------------------------------------------------------------------------------
+@since 20240327
+--------------------------------------------------------------------------------------------------------
+Add additional argument variable to limit the action into non-united operation:
+
+--register => Will enable the code to do file registrations
+--upload => Will enable the code invoke upload
 *)
-        
-[<EntryPointAttribute("")>]
-let Main (argv) =
+[<EntryPoint>]
+let Main (args: string array) = 
+    printfn "Argument: %s" args[0]
+
     AppBanner
 
     // Step 1
     let folderSettings: DataFrame array = FolderSettingExtractor.ExtractCsv;
 
-    // Step 2
-    SQLitePCL.Batteries.Init();
-
-    // Create service collection
-    let services = new ServiceCollection()
-
-    // Step 3
-
-    // Configuring DI
-    // Configure services
-    ConfigureServices services
-    let serviceProvider = services.BuildServiceProvider()
-    
-    // Registering DI
-    let ctx = serviceProvider.GetService<DatabaseContext>()
+    // Step 2 and 3
+    let ctx: DatabaseContext = ConfigurationBuilder;
 
     // Connecting to SQL
     let repository: IRegisteredFileRepository = new RegisteredFileRepository(ctx);
 
     // Step 4
-    for folder in folderSettings do
-        CommandParser folder repository |> ignore;
-
-    printfn "\n\n";
-
-    InvokeUpload repository |> ignore;
+    if Array.contains "--register" args then
+        printfn "Found register arguments. Running file registration.";
+        for folder in folderSettings do
+            CommandParser folder repository |> ignore;
+    
+    if Array.contains "--upload" args then
+        printfn "Found register arguments. Running upload.";
+        InvokeUpload repository |> ignore;
     
     0;
-
-Main "";
-
-
