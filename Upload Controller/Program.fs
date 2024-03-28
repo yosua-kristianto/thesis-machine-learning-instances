@@ -105,8 +105,6 @@ Add additional argument variable to limit the action into non-united operation:
 *)
 [<EntryPoint>]
 let Main (args: string array) = 
-    printfn "Argument: %s" args[0]
-
     AppBanner
 
     // Step 1
